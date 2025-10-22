@@ -1,6 +1,5 @@
 title: registry
-description: An open-source, extendable EToH Multi-Tower Kit.
-url: https://stamper-pkg.github.io
+description: stamper's official package registry
 
 plugins:
   - jekyll-remote-theme
