@@ -1,0 +1,29 @@
+{
+  "name": "registry",
+  "version": "0.1.0",
+  "description": "the official stamper package registry",
+  "homepage": "https://github.com/stamper-pkg/registry#readme",
+  "bugs": {
+    "url": "https://github.com/stamper-pkg/registry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stamper-pkg/registry.git"
+  },
+  "license": "MIT",
+  "author": "primiti-ve",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "graceful-fs": "^4.2.11",
+    "helmet": "^8.1.0",
+    "path": "^0.12.7",
+    "sanitize-filename": "^1.6.3"
+  }
+}
