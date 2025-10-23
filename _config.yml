@@ -1,5 +1,7 @@
 title: registry
 description: stamper's official package registry
+baseurl: "/registry"
+url: "https://stamper-luau.github.io"
 
 plugins:
   - jekyll-remote-theme
