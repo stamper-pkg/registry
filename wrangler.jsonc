@@ -1,0 +1,19 @@
+{
+  "name": "stamper-registry",
+  "main": "src/index.js",
+
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "workers_dev": true,
+  "preview_urls": true,
+
+  "kv_namespaces": [
+    {
+      "binding": "PACKAGES",
+      "id": "4aec66673545498e937ac94f883492d0"
+    }
+  ],
+
+  "env": {}
+}
