@@ -7,19 +7,25 @@ export default {
       const url = new URL(request.url);
       const { pathname, searchParams } = url;
 
-      // Basic rate limit (simple in-memory demo)
       if (!env.REQUEST_COUNT) env.REQUEST_COUNT = 0;
+
       env.REQUEST_COUNT++;
+
       if (env.REQUEST_COUNT > 30) {
         return new Response(
           JSON.stringify({
-            error: "Too many requests. Please try again later.",
+            error: "too many requests. please try again later!",
           }),
+
           {
             status: 429,
             headers: { "content-type": "application/json" },
           }
         );
+      }
+
+      if (pathname === "/registry/search" && request.method === "GET") {
+        return handleRegistrySearch(env, searchParams);
       }
 
       if (pathname === "/packages/new" && request.method === "POST") {
@@ -37,7 +43,8 @@ export default {
       return new Response("Not found", { status: 404 });
     } catch (err) {
       console.error(err);
-      return new Response(JSON.stringify({ error: "Internal server error" }), {
+
+      return new Response(JSON.stringify({ error: "internal server error!" }), {
         status: 500,
         headers: { "content-type": "application/json" },
       });
@@ -45,7 +52,30 @@ export default {
   },
 };
 
-// --- 🧱 Helper functions ---
+async function handleRegistrySearch(env, params) {
+  const search = sanitize(params.get("search") || "");
+  const resultsLimit = parseInt(params.get("results") || "10", 10);
+
+  const allKeys = await env.PACKAGES.list();
+  const matches = [];
+
+  for (const key of allKeys.keys) {
+    if (key.name.toLowerCase().includes(search.toLowerCase())) {
+      matches.push(key.name);
+
+      if (matches.length >= resultsLimit) {
+        break;
+      };
+    }
+  }
+
+  return jsonResponse({
+    query: search,
+    count: matches.length,
+    results: matches,
+  });
+}
+
 async function handleNewPackage(request, env, params) {
   const owner = sanitize(params.get("owner"));
   const name = sanitize(params.get("name"));
@@ -55,7 +85,6 @@ async function handleNewPackage(request, env, params) {
   const existing = await env.PACKAGES.get(key);
 
   if (existing) {
-    // redirect to update
     return handleUpdatePackage(request, env, params);
   }
 
@@ -68,17 +97,19 @@ async function handleNewPackage(request, env, params) {
     "SHA-256",
     new TextEncoder().encode(content)
   );
+
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
   return jsonResponse(
     {
-      message: "Package version initialized successfully",
+      message: "package version initialized successfully!",
       owner,
       name,
       version,
       hash,
     },
+
     201
   );
 }
@@ -92,14 +123,15 @@ async function handleUpdatePackage(request, env, params) {
   const existing = await env.PACKAGES.get(key);
 
   if (!existing) {
-    return jsonResponse({ error: "Package version not found" }, 404);
+    return jsonResponse({ error: "package version not found." }, 404);
   }
 
   const body = await request.json();
   const newContent = body?.content;
+
   if (!newContent) {
     return jsonResponse(
-      { error: "Missing 'content' field in request body" },
+      { error: "missing 'content' field in request body." },
       400
     );
   }
@@ -110,11 +142,12 @@ async function handleUpdatePackage(request, env, params) {
     "SHA-256",
     new TextEncoder().encode(newContent)
   );
+
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
   return jsonResponse({
-    message: "Package version updated successfully",
+    message: "package version updated successfully!",
     owner,
     name,
     version,
@@ -131,7 +164,7 @@ async function handleGetPackage(env, params) {
   const content = await env.PACKAGES.get(key);
 
   if (!content) {
-    return jsonResponse({ error: "Package version not found" }, 404);
+    return jsonResponse({ error: "package version not found!" }, 404);
   }
 
   return new Response(content, {
@@ -143,7 +176,6 @@ async function handleGetPackage(env, params) {
   });
 }
 
-// --- 🔧 Utils ---
 function sanitize(str = "") {
   return str.replace(/[^a-zA-Z0-9_\-\.]/g, "_");
 }
