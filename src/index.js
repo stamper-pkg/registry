@@ -61,7 +61,7 @@ async function handleRegistrySearch(env, params) {
 
   for (const key of allKeys.keys) {
     if (key.name.toLowerCase().includes(search.toLowerCase())) {
-      matches.push(key.name);
+      matches.push(key);
 
       if (matches.length >= resultsLimit) {
         break;
