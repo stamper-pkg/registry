@@ -61,7 +61,12 @@ async function handleRegistrySearch(env, params) {
 
   for (const key of allKeys.keys) {
     if (key.name.toLowerCase().includes(search.toLowerCase())) {
-      matches.push(key);
+      const packageContent = await env.PACKAGES.get(key);
+
+      matches.push({
+        name: key.name,
+        value: packageContent,
+      });
 
       if (matches.length >= resultsLimit) {
         break;
